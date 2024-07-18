@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet" href="/src/styles/style.css">
+    <title>Notes App</title>
+
+    <!-- Favicons -->
+    <link rel="icon" href="/src/public/favicon.png" sizes="512x512" />
+</head>
+
+<body>
+    <div class="grid">
+        <header class="head_bar">
+            <nav class="topnav">
+                <a href="#">
+                    <h1 class="head_bar__title">Notes App</h1>
+                </a>
+                <!-- <ul id="links">
+                    <li><a href="#"> Add Note </a></li>
+                </ul>
+                <a id="mobile-menu" class="icon">
+                    <i class="fa fa-bars"></i>
+                </a> -->
+            </nav>
+        </header>
+        <aside>
+            <section class="input__section">
+                <h2>Input New Note</h2>
+                <form id="input-note">
+
+                    <label for="input-note-title">Title</label>
+                    <input id="input-note-title" type="text" required>
+
+                    <label for="note-body">Body</label>
+                    <textarea id="note-body" type="text" required></textarea>
+
+                    <button id="note-submit" type="submit">Add Book</button>
+
+                </form>
+
+            </section>
+        </aside>
+        <main>
+
+
+            <div class="content">
+
+                <section class="note_shelf">
+                    <h2>Notes</h2>
+                    <form id="searchForm" class="search-form">
+                        <input id="search-note" name="name" type="text" value="" placeholder='Search by title ...' />
+                        <label for="search-note">Search</label>
+                        <button>Search</button>
+                    </form>
+
+                    <div id="noteListContainer" class="note-list-container">
+                        <div class="placeholder query-waiting">Waiting for search keyword</div>
+                        <div class="placeholder search-loading">Loading</div>
+
+                        <div class="note-list">
+                            <div class="list"></div>
+                        </div>
+                        <!--                <div class="note-item">-->
+                        <!--                    <div class="note-item__content">-->
+                        <!--                        <a href="#">-->
+                        <!--                            <h3 class="note-item__title">Personal Goals</h3>-->
+                        <!--                        </a>-->
+                        <!--                        <p class="note-item__date">2022-08-10T08:45:23.120Z</p>-->
+                        <!--                        <p class="note-item__body">Read two books per month, exercise three times a week, learn a-->
+                        <!--                            new language.</p>-->
+                        <!--                    </div>-->
+                        <!--                </div>-->
+
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <footer>
+            <p>Copyright &#169; 2024, Fakhry</p>
+        </footer>
+    </div>
+
+    <script type="module" src="/src/app.js"></script>
+</body>
+
+</html>
