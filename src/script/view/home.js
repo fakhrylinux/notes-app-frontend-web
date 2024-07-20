@@ -6,8 +6,22 @@ const home = () => {
     const noteListContainerElement = document.querySelector('#noteListContainer');
     const noteQueryWaitingElement = noteListContainerElement.querySelector('.query-waiting');
     const noteLoadingElement = noteListContainerElement.querySelector('.search-loading');
-    const noteListElement = noteListContainerElement.querySelector('.note-list');
-    const listElement = noteListElement.querySelector('.list');
+    const noteListElement = noteListContainerElement.querySelector('note-list');
+    const noteInputFormElement = document.getElementById('input-note');
+    const noteInput = noteInputFormElement.elements.title;
+
+    const loadNotes = () => {
+        const notes = Notes.getAll()
+        const noteItems = notes.map((note) => {
+            const noteItem = document.createElement('note-item');
+            noteItem.note = note;
+
+            return noteItem;
+        });
+        Utils.emptyElement(noteListElement);
+        noteListElement.append(...noteItems);
+        Utils.hideElement(noteLoadingElement);
+    }
 
     const showNote = (query) => {
         showLoading();
@@ -24,21 +38,15 @@ const home = () => {
     };
 
     const displayResult = (notes) => {
-        const noteItem = notes.map((note) => {
-            return `
-            <div class="note-item">
-                    <div class="note-item__content">
-                        <a href="#">
-                            <h3 class="note-item__title">${note.title}</h3>
-                        </a>
-                        <p class="note-item__date">${note.createdAt}</p>
-                        <p class="note-item__body">${note.body}</p>
-                    </div>
-                </div>
-            `;
+        const noteItems = notes.map((note) => {
+            const noteItem = document.createElement('note-item');
+            noteItem.note = note;
+
+            return noteItem;
         });
 
-        listElement.innerHTML = noteItem.join('');
+        Utils.emptyElement(noteListElement);
+        noteListElement.append(...noteItems);
     };
 
     const showNoteList = () => {
@@ -62,8 +70,44 @@ const home = () => {
         Utils.showElement(noteQueryWaitingElement);
     };
 
+    noteInputFormElement.addEventListener('submit', (event) => event.preventDefault());
+
+    const customValidationTitleHandler = (event) => {
+        event.target.setCustomValidity('');
+
+        if (event.target.validity.valueMissing) {
+            event.target.setCustomValidity('Note title is required.');
+            return;
+        }
+
+        if (event.target.validity.tooShort) {
+            event.target.setCustomValidity('Minimum length is 8 character.');
+            return;
+        }
+    }
+
+    noteInput.addEventListener('change', customValidationTitleHandler);
+    noteInput.addEventListener('invalid', customValidationTitleHandler);
+
+    noteInput.addEventListener('blur', (event) => {
+        // Validate the field
+        const isValid = event.target.validity.valid;
+        const errorMessage = event.target.validationMessage;
+
+        const connectedValidationId = event.target.getAttribute('aria-describedby');
+        const connectedValidationEl = connectedValidationId
+            ? document.getElementById(connectedValidationId)
+            : null;
+
+        if (connectedValidationEl && errorMessage && !isValid) {
+            connectedValidationEl.innerText = errorMessage;
+        } else {
+            connectedValidationEl.innerText = '';
+        }
+    });
+
     searchFormElement.addEventListener('submit', onSearchHandler);
-    showQueryWaiting();
+    loadNotes();
 };
 
 export default home;
