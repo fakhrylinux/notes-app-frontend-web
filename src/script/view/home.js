@@ -3,6 +3,7 @@ import NotesApi from "../data/remote/notes-api.js";
 
 const home = () => {
   let notes = [];
+  const overlay = document.getElementById("overlay");
   const searchFormElement = document.querySelector("#searchForm");
   const noteListContainerElement = document.querySelector("#noteListContainer");
   const noteQueryWaitingElement =
@@ -13,7 +14,17 @@ const home = () => {
   const noteInputFormElement = document.getElementById("input-note");
   const noteInput = noteInputFormElement.elements.title;
 
+  const showProgressBar = (isShow) => {
+    if (isShow) {
+      // setTimeout((), 5000);
+      overlay.style.display = "block";
+    } else {
+      overlay.style.display = "none";
+    }
+  };
+
   const loadNotes = async () => {
+    showProgressBar(true);
     notes = await NotesApi.getNotes();
     const noteItems = notes.map((note) => {
       const noteItem = document.createElement("note-item");
@@ -24,6 +35,7 @@ const home = () => {
     Utils.emptyElement(noteListElement);
     noteListElement.append(...noteItems);
     Utils.hideElement(noteLoadingElement);
+    setTimeout(() => showProgressBar(false), 2000);
   };
 
   const searchNote = (query) => {
