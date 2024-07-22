@@ -24,10 +24,31 @@ const home = () => {
     }
   };
 
+  const showResponseMessage = (message = "Check your internet connection") => {
+    alert(message);
+  };
+
   const loadNotes = async () => {
     showProgressBar(true);
-    notes = await NotesApi.getNotes();
-    archiveNotes = await NotesApi.getArchiveNotes();
+    try {
+      const result = await NotesApi.getNotes();
+      if (result.status === "success") {
+        notes = result.data;
+      }
+    } catch (error) {
+      showProgressBar(false);
+      showResponseMessage(error);
+    }
+
+    try {
+      const result = await NotesApi.getArchiveNotes();
+      if (result.status === "success") {
+        archiveNotes = result.data;
+      }
+    } catch (error) {
+      showProgressBar(false);
+      showResponseMessage(error);
+    }
 
     const noteItems = notes.map((note) => {
       const noteItem = document.createElement("note-item");

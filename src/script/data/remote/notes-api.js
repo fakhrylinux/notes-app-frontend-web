@@ -4,13 +4,7 @@ class NotesApi {
   static async getNotes() {
     try {
       const response = await fetch(`${BASE_URL}/notes`);
-      const responseJson = await response.json();
-      console.log(responseJson);
-      if (responseJson.error) {
-        return responseJson.message;
-      } else {
-        return responseJson.data;
-      }
+      return await response.json();
     } catch (error) {
       throw error;
     }
@@ -19,19 +13,13 @@ class NotesApi {
   static async getArchiveNotes() {
     try {
       const response = await fetch(`${BASE_URL}/notes/archived`);
-      const responseJson = await response.json();
-      if (responseJson.error) {
-        return responseJson.message;
-      } else {
-        return responseJson.data;
-      }
+      return await response.json();
     } catch (error) {
       throw error;
     }
   }
 
   static async postArchiveNote(noteId) {
-    console.log(`postAarchive: ${noteId}`);
     try {
       const options = {
         method: "POST",
@@ -48,7 +36,6 @@ class NotesApi {
   }
 
   static async postUnarchiveNote(noteId) {
-    console.log(`postUnarchive: ${noteId}`);
     try {
       const options = {
         method: "POST",
