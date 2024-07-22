@@ -2,6 +2,7 @@ import Utils from "../utils.js";
 import NotesApi from "../data/remote/notes-api.js";
 
 const home = () => {
+  let notes = [];
   const searchFormElement = document.querySelector("#searchForm");
   const noteListContainerElement = document.querySelector("#noteListContainer");
   const noteQueryWaitingElement =
@@ -13,7 +14,7 @@ const home = () => {
   const noteInput = noteInputFormElement.elements.title;
 
   const loadNotes = async () => {
-    const notes = await NotesApi.getNotes();
+    notes = await NotesApi.getNotes();
     const noteItems = notes.map((note) => {
       const noteItem = document.createElement("note-item");
       noteItem.note = note;
@@ -25,9 +26,21 @@ const home = () => {
     Utils.hideElement(noteLoadingElement);
   };
 
+  const searchNote = (query) => {
+    return notes.filter((note) => {
+      const loweredCaseNoteTitle = (note.title || "-").toLowerCase();
+      const jammedNoteTitle = loweredCaseNoteTitle.replace(/\s/g, "");
+
+      const loweredCaseQuery = query.toLowerCase();
+      const jammedQuery = loweredCaseQuery.replace(/\s/g, "");
+
+      return jammedNoteTitle.indexOf(jammedQuery) !== -1;
+    });
+  };
+
   const showNote = (query) => {
     showLoading();
-    const result = NotesApi.searchNote(query);
+    const result = searchNote(query);
     displayResult(result);
     showNoteList();
   };
@@ -107,7 +120,6 @@ const home = () => {
 
     if (event.target.validity.tooShort) {
       event.target.setCustomValidity("Minimum length is 8 character.");
-      return;
     }
   };
 
