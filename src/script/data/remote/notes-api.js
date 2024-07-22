@@ -6,13 +6,61 @@ class NotesApi {
       const response = await fetch(`${BASE_URL}/notes`);
       const responseJson = await response.json();
       console.log(responseJson);
-      if (responseJson.eror) {
-        showResponseMessage(responseJson.message);
+      if (responseJson.error) {
+        return responseJson.message;
       } else {
         return responseJson.data;
       }
     } catch (error) {
-      showResponseMessage(error);
+      throw error;
+    }
+  }
+
+  static async getArchiveNotes() {
+    try {
+      const response = await fetch(`${BASE_URL}/notes/archived`);
+      const responseJson = await response.json();
+      if (responseJson.error) {
+        return responseJson.message;
+      } else {
+        return responseJson.data;
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async postArchiveNote(noteId) {
+    console.log(`postAarchive: ${noteId}`);
+    try {
+      const options = {
+        method: "POST",
+      };
+      const response = await fetch(
+        `${BASE_URL}/notes/${noteId}/archive`,
+        options,
+      );
+      const responseJson = await response.json();
+      return responseJson.message;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  static async postUnarchiveNote(noteId) {
+    console.log(`postUnarchive: ${noteId}`);
+    try {
+      const options = {
+        method: "POST",
+      };
+      const response = await fetch(
+        `${BASE_URL}/notes/${noteId}/unarchive`,
+        options,
+      );
+      const responseJson = await response.json();
+      return responseJson.message;
+    } catch (error) {
+      throw error;
     }
   }
 
@@ -28,10 +76,9 @@ class NotesApi {
 
       const response = await fetch(`${BASE_URL}/notes`, options);
       const responseJson = await response.json();
-      showResponseMessage(responseJson.message);
-      // this.getNotes();
+      return responseJson.message;
     } catch (error) {
-      // showResponseMessage(error);
+      throw error;
     }
   }
 
@@ -41,16 +88,11 @@ class NotesApi {
         method: "DELETE",
       };
       const response = await fetch(`${BASE_URL}/notes/${noteId}`, options);
-      const responseJson = await response.json();
-      showResponseMessage(responseJson.message);
+      return response.json();
     } catch (error) {
-      // showResponseMessage(error);
+      throw error;
     }
   }
-
-  showResponseMessage = (message = "Check your internet connection") => {
-    alert(message);
-  };
 }
 
 export default NotesApi;

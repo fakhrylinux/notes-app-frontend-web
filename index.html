@@ -36,19 +36,16 @@
                 aria-describedby="noteValidation"
                 required
               />
-
               <p
                 id="noteValidation"
                 class="validation-message"
                 aria-live="polite"
               ></p>
             </div>
-
             <div class="form-group">
               <label for="noteBody">Note Content</label>
               <textarea id="noteBody" name="body" rows="5" required></textarea>
             </div>
-
             <button id="note-submit" type="submit">Add Note</button>
           </form>
         </section>
@@ -75,6 +72,9 @@
               <div class="placeholder search-loading">Loading</div>
 
               <note-list></note-list>
+              <br><br>
+              <h2>Archive Notes</h2>
+              <note-list id="archiveNoteList"></note-list>
             </div>
           </section>
         </div>

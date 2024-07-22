@@ -6,9 +6,11 @@ class NoteItem extends HTMLElement {
     createdAt: null,
     title: null,
     body: null,
+    archived: null,
   };
 
   _deleteEvent = "delete";
+  _toggleArchiveEvent = "toggleArchive";
 
   constructor() {
     super();
@@ -25,12 +27,18 @@ class NoteItem extends HTMLElement {
     this._shadowRoot
       .querySelector("span.deleteBtn")
       .addEventListener("click", () => this._onClickHandler(this));
+    this._shadowRoot
+      .querySelector("span.toggleArchiveBtn")
+      .addEventListener("click", () => this._onToggleArchiveHandler(this));
   }
 
   disconnectedCallback() {
     this._shadowRoot
       .querySelector("span.deleteBtn")
       .removeEventListener("click", () => this._onClickHandler(this));
+    this._shadowRoot
+      .querySelector("span.toggleArchiveBtn")
+      .addEventListener("click", () => this._onToggleArchiveHandler(this));
   }
 
   _onClickHandler(noteItemInstance) {
@@ -38,6 +46,17 @@ class NoteItem extends HTMLElement {
     noteItemInstance.dispatchEvent(
       new CustomEvent(this._deleteEvent, {
         detail: { id },
+        bubbles: true,
+      }),
+    );
+  }
+
+  _onToggleArchiveHandler(noteItemInstance) {
+    const id = this._note.id;
+    const isArchive = this._note.archived;
+    noteItemInstance.dispatchEvent(
+      new CustomEvent(this._toggleArchiveEvent, {
+        detail: { id, isArchive },
         bubbles: true,
       }),
     );
@@ -126,6 +145,10 @@ class NoteItem extends HTMLElement {
                 <p class="note-item__date">${this._note.createdAt}</p>
                 <p class="note-item__body">${this._note.body}</p>
                 <div class="action">
+                
+                    <span  class="material-symbols-outlined toggleArchiveBtn">
+                      ${this._note.archived ? "unarchive" : "archive"}
+                    </span>
                     <span id="${this._note.id}" class="material-symbols-outlined deleteBtn">delete</span>
                 </div>
             </div>

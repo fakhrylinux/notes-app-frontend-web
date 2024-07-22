@@ -3,20 +3,21 @@ import NotesApi from "../data/remote/notes-api.js";
 
 const home = () => {
   let notes = [];
+  let archiveNotes = [];
   const overlay = document.getElementById("overlay");
   const searchFormElement = document.querySelector("#searchForm");
   const noteListContainerElement = document.querySelector("#noteListContainer");
-  const noteQueryWaitingElement =
-    noteListContainerElement.querySelector(".query-waiting");
   const noteLoadingElement =
     noteListContainerElement.querySelector(".search-loading");
   const noteListElement = noteListContainerElement.querySelector("note-list");
+  const archiveNoteListElement = noteListContainerElement.querySelector(
+    "note-list#archiveNoteList",
+  );
   const noteInputFormElement = document.getElementById("input-note");
   const noteInput = noteInputFormElement.elements.title;
 
   const showProgressBar = (isShow) => {
     if (isShow) {
-      // setTimeout((), 5000);
       overlay.style.display = "block";
     } else {
       overlay.style.display = "none";
@@ -26,16 +27,28 @@ const home = () => {
   const loadNotes = async () => {
     showProgressBar(true);
     notes = await NotesApi.getNotes();
+    archiveNotes = await NotesApi.getArchiveNotes();
+
     const noteItems = notes.map((note) => {
       const noteItem = document.createElement("note-item");
       noteItem.note = note;
 
       return noteItem;
     });
+    const archiveNoteItems = archiveNotes.map((note) => {
+      const noteItem = document.createElement("note-item");
+      noteItem.note = note;
+
+      return noteItem;
+    });
+
     Utils.emptyElement(noteListElement);
+    Utils.emptyElement(archiveNoteListElement);
+
     noteListElement.append(...noteItems);
+    archiveNoteListElement.append(...archiveNoteItems);
     Utils.hideElement(noteLoadingElement);
-    setTimeout(() => showProgressBar(false), 2000);
+    setTimeout(() => showProgressBar(false), 500);
   };
 
   const searchNote = (query) => {
@@ -90,14 +103,7 @@ const home = () => {
     Utils.showElement(noteLoadingElement);
   };
 
-  const showQueryWaiting = () => {
-    Array.from(noteListContainerElement.children).forEach((element) => {
-      Utils.hideElement(element);
-    });
-    Utils.showElement(noteQueryWaitingElement);
-  };
-
-  const addNoteHandler = (event) => {
+  const addNoteHandler = async (event) => {
     event.preventDefault();
     const inputTitle = noteInputFormElement.elements.inputNoteTitle;
     const inputBody = noteInputFormElement.elements.noteBody;
@@ -107,7 +113,7 @@ const home = () => {
       body: inputBody.value,
     };
 
-    NotesApi.addNote(note);
+    await NotesApi.addNote(note);
     inputTitle.value = "";
     inputBody.value = "";
     loadNotes();
@@ -115,8 +121,17 @@ const home = () => {
 
   const onDeleteHandler = async (event) => {
     const { id } = event.detail;
-    console.log(`home.js noteId: ${id}`);
     await NotesApi.deleteNote(id);
+    await loadNotes();
+  };
+
+  const onToggleArchiveHandler = async (event) => {
+    const { id, isArchive } = event.detail;
+    if (isArchive) {
+      await NotesApi.postUnarchiveNote(id);
+    } else {
+      await NotesApi.postArchiveNote(id);
+    }
     loadNotes();
   };
 
@@ -156,6 +171,12 @@ const home = () => {
   });
 
   noteListElement.addEventListener("delete", onDeleteHandler);
+  noteListElement.addEventListener("toggleArchive", onToggleArchiveHandler);
+  archiveNoteListElement.addEventListener("delete", onDeleteHandler);
+  archiveNoteListElement.addEventListener(
+    "toggleArchive",
+    onToggleArchiveHandler,
+  );
 
   searchFormElement.addEventListener("submit", onSearchHandler);
   loadNotes();
