@@ -1,5 +1,6 @@
 import Utils from "../utils.js";
 import NotesApi from "../data/remote/notes-api.js";
+import anime from "animejs/lib/anime.es";
 
 const home = () => {
   let notes = [];
@@ -69,7 +70,14 @@ const home = () => {
     noteListElement.append(...noteItems);
     archiveNoteListElement.append(...archiveNoteItems);
     Utils.hideElement(noteLoadingElement);
-    setTimeout(() => showProgressBar(false), 500);
+    setTimeout(() => showProgressBar(false), 300);
+    anime({
+      targets: document.querySelectorAll("note-item"),
+      translateY: 500,
+      direction: "reverse",
+      easing: "easeInOutSine",
+      delay: anime.stagger(200),
+    });
   };
 
   const searchNote = (query) => {
