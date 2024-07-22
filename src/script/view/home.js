@@ -25,7 +25,7 @@ const home = () => {
 
     const showNote = (query) => {
         showLoading();
-        const result = Notes.searchNote(query);
+        const result = NotesApi.searchNote(query);
         displayResult(result);
         showNoteList();
     };
