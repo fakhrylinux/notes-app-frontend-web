@@ -1,56 +1,60 @@
 class NoteItem extends HTMLElement {
-    _shadowRoot = null;
-    _style = null;
-    _note = {
-        id: null,
-        createdAt: null,
-        title: null,
-        body: null,
-    };
+  _shadowRoot = null;
+  _style = null;
+  _note = {
+    id: null,
+    createdAt: null,
+    title: null,
+    body: null,
+  };
 
-    _deleteEvent = 'delete';
+  _deleteEvent = "delete";
 
-    constructor() {
-        super();
+  constructor() {
+    super();
 
-        this._shadowRoot = this.attachShadow({ mode: 'open' });
-        this._style = document.createElement('style');
-    }
+    this._shadowRoot = this.attachShadow({ mode: "open" });
+    this._style = document.createElement("style");
+  }
 
-    _emptyContent() {
-        this._shadowRoot.innerHTML = '';
-    }
+  _emptyContent() {
+    this._shadowRoot.innerHTML = "";
+  }
 
-    connectedCallback() {
-        this._shadowRoot.querySelector('span.deleteBtn')
-            .addEventListener('click', () => this._onClickHandler(this));
-    }
+  connectedCallback() {
+    this._shadowRoot
+      .querySelector("span.deleteBtn")
+      .addEventListener("click", () => this._onClickHandler(this));
+  }
 
-    disconnectedCallback() {
-        this._shadowRoot.querySelector('span.deleteBtn')
-            .removeEventListener('click', () => this._onClickHandler(this));
-    }
+  disconnectedCallback() {
+    this._shadowRoot
+      .querySelector("span.deleteBtn")
+      .removeEventListener("click", () => this._onClickHandler(this));
+  }
 
-    _onClickHandler(noteItemInstance) {
-        const id = this._note.id;
-        noteItemInstance.dispatchEvent(new CustomEvent(this._deleteEvent, {
-            detail: { id },
-            bubbles: true,
-        }));
-    }
+  _onClickHandler(noteItemInstance) {
+    const id = this._note.id;
+    noteItemInstance.dispatchEvent(
+      new CustomEvent(this._deleteEvent, {
+        detail: { id },
+        bubbles: true,
+      }),
+    );
+  }
 
-    set note(value) {
-        this._note = value;
+  set note(value) {
+    this._note = value;
 
-        this.render();
-    }
+    this.render();
+  }
 
-    get note() {
-        return this._note;
-    }
+  get note() {
+    return this._note;
+  }
 
-    _updateStyle() {
-        this._style.textContent = `
+  _updateStyle() {
+    this._style.textContent = `
         @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0");
 
         :host {
@@ -105,14 +109,14 @@ class NoteItem extends HTMLElement {
             cursor: pointer;
         }
       `;
-    }
+  }
 
-    render() {
-        this._emptyContent();
-        this._updateStyle();
+  render() {
+    this._emptyContent();
+    this._updateStyle();
 
-        this._shadowRoot.appendChild(this._style);
-        this._shadowRoot.innerHTML += `
+    this._shadowRoot.appendChild(this._style);
+    this._shadowRoot.innerHTML += `
 
         <div class="note-item">
             <div class="note-item__content">
@@ -127,7 +131,7 @@ class NoteItem extends HTMLElement {
             </div>
         </div>
       `;
-    }
+  }
 }
 
-customElements.define('note-item', NoteItem);
+customElements.define("note-item", NoteItem);
