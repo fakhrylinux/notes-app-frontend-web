@@ -8,6 +8,8 @@ class NoteItem extends HTMLElement {
         body: null,
     };
 
+    _deleteEvent = 'delete';
+
     constructor() {
         super();
 
@@ -17,6 +19,24 @@ class NoteItem extends HTMLElement {
 
     _emptyContent() {
         this._shadowRoot.innerHTML = '';
+    }
+
+    connectedCallback() {
+        this._shadowRoot.querySelector('span.deleteBtn')
+            .addEventListener('click', () => this._onClickHandler(this));
+    }
+
+    disconnectedCallback() {
+        this._shadowRoot.querySelector('span.deleteBtn')
+            .removeEventListener('click', () => this._onClickHandler(this));
+    }
+
+    _onClickHandler(noteItemInstance) {
+        const id = this._note.id;
+        noteItemInstance.dispatchEvent(new CustomEvent(this._deleteEvent, {
+            detail: { id },
+            bubbles: true,
+        }));
     }
 
     set note(value) {
@@ -31,6 +51,8 @@ class NoteItem extends HTMLElement {
 
     _updateStyle() {
         this._style.textContent = `
+        @import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0");
+
         :host {
             padding: .5rem;
             border: 1px solid black;
@@ -42,6 +64,8 @@ class NoteItem extends HTMLElement {
         }
 
         .note-item__content {
+            display: flex;
+            flex-direction: column;
             padding: 12px;
             flex: 1;
         }
@@ -67,6 +91,19 @@ class NoteItem extends HTMLElement {
         .note-item__body {
             font-size: 14px;
         }
+
+        .action {
+            align-self: flex-end;
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24;
+            cursor: pointer;
+        }
       `;
     }
 
@@ -84,6 +121,9 @@ class NoteItem extends HTMLElement {
                 </a>
                 <p class="note-item__date">${this._note.createdAt}</p>
                 <p class="note-item__body">${this._note.body}</p>
+                <div class="action">
+                    <span id="${this._note.id}" class="material-symbols-outlined deleteBtn">delete</span>
+                </div>
             </div>
         </div>
       `;

@@ -1,5 +1,5 @@
 import Utils from '../utils.js';
-import Notes from '../data/local/notes.js';
+import NotesApi from '../data/remote/notes-api.js';
 
 const home = () => {
     const searchFormElement = document.querySelector('#searchForm');
@@ -10,8 +10,8 @@ const home = () => {
     const noteInputFormElement = document.getElementById('input-note');
     const noteInput = noteInputFormElement.elements.title;
 
-    const loadNotes = () => {
-        const notes = Notes.getAll()
+    const loadNotes = async () => {
+        const notes = await NotesApi.getNotes();
         const noteItems = notes.map((note) => {
             const noteItem = document.createElement('note-item');
             noteItem.note = note;
@@ -70,7 +70,30 @@ const home = () => {
         Utils.showElement(noteQueryWaitingElement);
     };
 
-    noteInputFormElement.addEventListener('submit', (event) => event.preventDefault());
+    const addNoteHandler = (event) => {
+        event.preventDefault();
+        const inputTitle = noteInputFormElement.elements.inputNoteTitle;
+        const inputBody = noteInputFormElement.elements.noteBody;
+
+        const note = {
+            title: inputTitle.value,
+            body: inputBody.value,
+        }
+
+        NotesApi.addNote(note);
+        inputTitle.value = '';
+        inputBody.value = '';
+        loadNotes();
+    }
+
+    const onDeleteHandler = async (event) => {
+        const { id } = event.detail;
+        console.log(`home.js noteId: ${id}`);
+        await NotesApi.deleteNote(id);
+        loadNotes();
+    }
+
+    noteInputFormElement.addEventListener('submit', addNoteHandler);
 
     const customValidationTitleHandler = (event) => {
         event.target.setCustomValidity('');
@@ -105,6 +128,8 @@ const home = () => {
             connectedValidationEl.innerText = '';
         }
     });
+
+    noteListElement.addEventListener('delete', onDeleteHandler);
 
     searchFormElement.addEventListener('submit', onSearchHandler);
     loadNotes();
